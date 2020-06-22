@@ -112,9 +112,9 @@ async function startViewer(localView, remoteView, formValues, onStatsReport, onR
         console.log('[VIEWER] Connected to signaling service');
 
         // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
-        // If no video/audio needed, no need to request for the sources. 
+        // If no video/audio needed, no need to request for the sources.
         // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
-        if ((formValues.sendAudio||formValues.sendVideo )) {
+        if (formValues.sendAudio || formValues.sendVideo) {
             try {
                 viewer.localStream = await navigator.mediaDevices.getUserMedia(constraints);
                 viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
@@ -124,18 +124,16 @@ async function startViewer(localView, remoteView, formValues, onStatsReport, onR
                 return;
             }
         }
-        if (formValues.sendVideo || formValues.sendScreen) {
+        if (formValues.sendScreen) {
             try {
                 viewer.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
                 viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
                 localView.srcObject = viewer.localStream;
             } catch (e) {
-                console.error('[VIEWER] Could not find webcam');
+                console.error('[VIEWER] Could not find Screen');
                 return;
             }
         }
-
-
 
         // Create an SDP offer to send to the master
         console.log('[VIEWER] Creating SDP offer');
@@ -196,7 +194,7 @@ async function startViewer(localView, remoteView, formValues, onStatsReport, onR
             if (!formValues.useTrickleICE) {
                 console.log('[VIEWER] Sending SDP offer');
                 viewer.signalingClient.sendSdpOffer(viewer.peerConnection.localDescription);
-                viewer.signalingClient.broadcast.emit(viewer.peerConnection.localDescription)
+                viewer.signalingClient.broadcast.emit(viewer.peerConnection.localDescription);
             }
         }
     });

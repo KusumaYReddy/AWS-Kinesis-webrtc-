@@ -46,6 +46,7 @@ function getFormValues() {
         channelName: $('#channelName').val(),
         clientId: $('#clientId').val() || getRandomClientId(),
         sendVideo: $('#sendVideo').is(':checked'),
+        sendScreen: $('#sendScreen').is(':checked'),
         sendAudio: $('#sendAudio').is(':checked'),
         openDataChannel: $('#openDataChannel').is(':checked'),
         widescreen: $('#widescreen').is(':checked'),
@@ -84,7 +85,7 @@ function onStop() {
         stopViewer();
         $('#viewer').addClass('d-none');
     }
-    
+
     $('#form').removeClass('d-none');
     ROLE = null;
 }
@@ -174,7 +175,7 @@ const fields = [
     { field: 'sessionToken', type: 'text' },
     { field: 'endpoint', type: 'text' },
     { field: 'sendVideo', type: 'checkbox' },
-	{ field: 'sendScreen', type: 'checkbox' },
+    { field: 'sendScreen', type: 'checkbox' },
     { field: 'sendAudio', type: 'checkbox' },
     { field: 'widescreen', type: 'radio', name: 'resolution' },
     { field: 'fullscreen', type: 'radio', name: 'resolution' },

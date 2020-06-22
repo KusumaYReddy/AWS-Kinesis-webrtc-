@@ -100,14 +100,14 @@ async function startMaster(localView, remoteView, formValues, onStatsReport, onR
     const resolution = formValues.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
     const constraints = {
         video: formValues.sendVideo ? resolution : false,
-		screen:formValues.sendScreen ? resolution : false,
+        screen: formValues.sendScreen ? resolution : false,
         audio: formValues.sendAudio,
     };
 
-    // Get a stream from the webcam and display it in the local view. 
-    // If no video/audio needed, no need to request for the sources. 
+    // Get a stream from the webcam and display it in the local view.
+    // If no video/audio needed, no need to request for the sources.
     // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
-    if ((formValues.sendAudio||formValues.sendVideo )) {
+    if (formValues.sendAudio || formValues.sendVideo) {
         try {
             master.localStream = await navigator.mediaDevices.getUserMedia(constraints);
             localView.srcObject = master.localStream;
@@ -115,16 +115,15 @@ async function startMaster(localView, remoteView, formValues, onStatsReport, onR
             console.error('[MASTER] Could not find webcam');
         }
     }
-    if (formValues.sendVideo || formValues.sendScreen) {
+    if (formValues.sendScreen) {
         try {
             master.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
             //master.localStream.getTracks().forEach(track => peerConnection.addTrack(track, master.localStream));
             localView.srcObject = master.localStream;
         } catch (e) {
-            console.error('[MASTER] Could not find webcam');
+            console.error('[MASTER] Could not find Screen');
         }
     }
-
 
     master.signalingClient.on('open', async () => {
         console.log('[MASTER] Connected to signaling service');
@@ -167,7 +166,7 @@ async function startMaster(localView, remoteView, formValues, onStatsReport, onR
                     console.log('[MASTER] Sending SDP answer to client: ' + remoteClientId);
                     master.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
                     //master.signalingClient.emit(peerConnection.localDescription,remoteClientId)
-                    setRemoteDescription()
+                    setRemoteDescription();
                 }
             }
         });
@@ -203,7 +202,6 @@ async function startMaster(localView, remoteView, formValues, onStatsReport, onR
         if (formValues.useTrickleICE) {
             console.log('[MASTER] Sending SDP answer to client: ' + remoteClientId);
             master.signalingClient.sendSdpAnswer(peerConnection.localDescription, remoteClientId);
-
         }
         console.log('[MASTER] Generating ICE candidates for client: ' + remoteClientId);
     });
