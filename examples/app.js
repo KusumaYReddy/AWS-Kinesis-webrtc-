@@ -41,9 +41,13 @@ function getRandomClientId() {
 }
 
 function getFormValues() {
+    const selected = $('#channelName')[0];
+    console.log('Selected', selected);
+    const channelName = selected.options[selected.selectedIndex].value;
+    console.log('Channel NAme', channelName);
     return {
         region: $('#region').val(),
-        channelName: $('#channelName').val(),
+        channelName: channelName,
         clientId: $('#clientId').val() || getRandomClientId(),
         sendVideo: $('#sendVideo').is(':checked'),
         sendScreen: $('#sendScreen').is(':checked'),
