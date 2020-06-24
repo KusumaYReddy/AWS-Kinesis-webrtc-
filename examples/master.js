@@ -10,9 +10,9 @@ const master = {
     peerConnectionStatsInterval: null,
 };
 
-async function startMaster(localView, remoteView, formValues, onStatsReport, onRemoteDataMessage) {
+async function startMaster(localView, formValues, onStatsReport, onRemoteDataMessage) {
     master.localView = localView;
-    master.remoteView = remoteView;
+    // master.remoteView = remoteView;
 
     // Create KVS client
     const kinesisVideoClient = new AWS.KinesisVideo({
@@ -172,13 +172,13 @@ async function startMaster(localView, remoteView, formValues, onStatsReport, onR
         });
 
         // As remote tracks are received, add them to the remote view
-        peerConnection.addEventListener('track', event => {
-            console.log('[MASTER] Received remote track from client: ' + remoteClientId);
-            if (remoteView.srcObject) {
-                return;
-            }
-            remoteView.srcObject = event.streams[0];
-        });
+        // peerConnection.addEventListener('track', event => {
+        //     console.log('[MASTER] Received remote track from client: ' + remoteClientId);
+        //     if (remoteView.srcObject) {
+        //         return;
+        //     }
+        //     remoteView.srcObject = event.streams[0];
+        // });
 
         // If there's no video/audio, master.localStream will be null. So, we should skip adding the tracks from it.
         if (master.localStream) {

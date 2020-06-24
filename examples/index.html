@@ -120,10 +120,21 @@
                     </div>
                     <div>
                         <button id="master-button" type="button" class="btn btn-primary">Start Master</button>
-                        <!-- <button id="viewer-button" type="button" class="btn btn-primary">Start Viewer</button>
-                        <button id="create-channel-button" type="button" class="btn btn-primary">Create Channel</button> -->
+
+                        <!-- <button id="create-channel-button" type="button" class="btn btn-primary">Create Channel</button> -->
                     </div>
                 </form>
+                <div>
+                    <button id="viewer-button0" type="button" class="btn btn-primary" value="1" onclick="handleStartViewer(this.value)">
+                        Start Viewer1
+                    </button>
+                    <button id="viewer-button1" type="button" class="btn btn-primary" value="2" onclick="handleStartViewer(this.value)">
+                        Start Viewer2
+                    </button>
+                    <button id="viewer-button2" type="button" class="btn btn-primary" value="3" onclick="handleStartViewer(this.value)">
+                        Start Viewer3
+                    </button>
+                </div>
 
                 <div id="master" class="d-none">
                     <!-- <h2>Master</h2> -->
