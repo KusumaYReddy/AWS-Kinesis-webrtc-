@@ -3,8 +3,8 @@
  */
 const viewer = {};
 
-async function startViewer(localView, remoteView, formValues, onStatsReport, onRemoteDataMessage) {
-    viewer.localView = localView;
+async function startViewer(remoteView, formValues, onStatsReport, onRemoteDataMessage) {
+    // viewer.localView = localView;
     viewer.remoteView = remoteView;
 
     // Create KVS client
@@ -114,26 +114,26 @@ async function startViewer(localView, remoteView, formValues, onStatsReport, onR
         // Get a stream from the webcam, add it to the peer connection, and display it in the local view.
         // If no video/audio needed, no need to request for the sources.
         // Otherwise, the browser will throw an error saying that either video or audio has to be enabled.
-        if (formValues.sendAudio || formValues.sendVideo) {
-            try {
-                viewer.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-                viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
-                localView.srcObject = viewer.localStream;
-            } catch (e) {
-                console.error('[VIEWER] Could not find webcam');
-                return;
-            }
-        }
-        if (formValues.sendScreen) {
-            try {
-                viewer.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
-                viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
-                localView.srcObject = viewer.localStream;
-            } catch (e) {
-                console.error('[VIEWER] Could not find Screen');
-                return;
-            }
-        }
+        // if (formValues.sendAudio || formValues.sendVideo) {
+        //     try {
+        //         viewer.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+        //         viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
+        //         localView.srcObject = viewer.localStream;
+        //     } catch (e) {
+        //         console.error('[VIEWER] Could not find webcam');
+        //         return;
+        //     }
+        // }
+        // if (formValues.sendScreen) {
+        //     try {
+        //         viewer.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+        //         viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
+        //         localView.srcObject = viewer.localStream;
+        //     } catch (e) {
+        //         console.error('[VIEWER] Could not find Screen');
+        //         return;
+        //     }
+        // }
 
         // Create an SDP offer to send to the master
         console.log('[VIEWER] Creating SDP offer');
@@ -240,9 +240,9 @@ function stopViewer() {
         viewer.peerConnectionStatsInterval = null;
     }
 
-    if (viewer.localView) {
-        viewer.localView.srcObject = null;
-    }
+    // if (viewer.localView) {
+    //     viewer.localView.srcObject = null;
+    // }
 
     if (viewer.remoteView) {
         viewer.remoteView.srcObject = null;

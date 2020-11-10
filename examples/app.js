@@ -1,5 +1,5 @@
 let ROLE = null; // Possible values: 'master', 'viewer', null
-
+let FORM_VALUES = null;
 function configureLogging() {
     function log(level, messages) {
         const text = messages
@@ -13,19 +13,16 @@ function configureLogging() {
             .join(' ');
         $('#logs').append($(`<div class="${level.toLowerCase()}">`).text(`[${new Date().toISOString()}] [${level}] ${text}\n`));
     }
-
     console._error = console.error;
     console.error = function(...rest) {
         log('ERROR', Array.prototype.slice.call(rest));
         console._error.apply(this, rest);
     };
-
     console._warn = console.warn;
     console.warn = function(...rest) {
         log('WARN', Array.prototype.slice.call(rest));
         console._warn.apply(this, rest);
     };
-
     console._log = console.log;
     console.log = function(...rest) {
         log('INFO', Array.prototype.slice.call(rest));
@@ -41,9 +38,17 @@ function getRandomClientId() {
 }
 
 function getFormValues() {
+    const selected = $('#channelName')[0];
+    const options = Array.from(selected.options);
+    const channelName = selected.options[selected.selectedIndex].value;
+    options.splice(0, 1);
+    options.splice(selected.selectedIndex - 1, 1);
+    remoteChannels = options.map(o => o.value);
+
     return {
         region: $('#region').val(),
-        channelName: $('#channelName').val(),
+        channelName: channelName,
+        remoteChannels: remoteChannels,
         clientId: $('#clientId').val() || getRandomClientId(),
         sendVideo: $('#sendVideo').is(':checked'),
         sendScreen: $('#sendScreen').is(':checked'),
@@ -110,23 +115,55 @@ $('#master-button').click(async () => {
     $('#master').removeClass('d-none');
 
     const localView = $('#master .local-view')[0];
-    const remoteView = $('#master .remote-view')[0];
+    const remoteViews = Array.from($('#master .remote-view'));
+    // console.log(remoteViews);
     const localMessage = $('#master .local-message')[0];
     const remoteMessage = $('#master .remote-message')[0];
     const formValues = getFormValues();
-
+    FORM_VALUES = formValues;
+    console.log('FORM_VALUES in master: ', FORM_VALUES);
     $(remoteMessage).empty();
     localMessage.value = '';
     toggleDataChannelElements();
 
-    startMaster(localView, remoteView, formValues, onStatsReport, event => {
+    startMaster(localView, formValues, onStatsReport, event => {
         remoteMessage.append(`${event.data}\n`);
     });
+
+    console.log('Out of start master');
+    // remoteViews.forEach((remoteView, index) => {
+    //     const localMessage = $('#viewer .local-message')[0];
+    //     const remoteMessage = $('#viewer .remote-message')[0];
+    //     formValues.channelName = formValues.remoteChannels[index];
+    //     $(remoteMessage).empty();
+    //     localMessage.value = '';
+    //     toggleDataChannelElements();
+
+    //     startViewer(remoteView, formValues, onStatsReport, event => {
+    //         remoteMessage.append(`${event.data}\n`);
+    //     });
+    // });
 });
 
 $('#stop-master-button').click(onStop);
 
-$('#viewer-button').click(async () => {
+function handleStartViewer(value) {
+    ROLE = 'viewer';
+    viewerIndex = parseInt(value) - 1;
+
+    const remoteView = $('#master .remote-view')[viewerIndex];
+    console.log(remoteView);
+    const localMessage = $('#master .local-message')[0];
+    const remoteMessage = $('#master .remote-message')[0];
+    const formValues = FORM_VALUES;
+    console.log('FORM_VALUES in viewer: ', FORM_VALUES);
+    formValues.channelName = formValues.remoteChannels[viewerIndex];
+    startViewer(remoteView, formValues, onStatsReport, event => {
+        remoteMessage.append(`${event.data}\n`);
+    });
+}
+
+/*$('#viewer-button').click(async () => {
     ROLE = 'viewer';
     $('#form').addClass('d-none');
     $('#viewer').removeClass('d-none');
@@ -144,7 +181,7 @@ $('#viewer-button').click(async () => {
     startViewer(localView, remoteView, formValues, onStatsReport, event => {
         remoteMessage.append(`${event.data}\n`);
     });
-});
+}); */
 
 $('#stop-viewer-button').click(onStop);
 
